@@ -39,3 +39,4 @@ ios/
 .expo/
 *.apk
 *.aab
+server/
