@@ -1,22 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const jwt = require('jsonwebtoken');
+const verifyToken = require('../middleware/auth');
+const validate = require('../middleware/validate');
+const { registerSchema, loginSchema } = require('../utils/validationSchemas');
+const { authLimiter } = require('../middleware/rateLimiter');
+const { checkDeviceLimit, captureDeviceId } = require('../middleware/fraudMiddleware');
 
-// Simple Middleware to verify token
-const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(403).json({ message: 'No token provided' });
+// New Routes
+router.post('/register', authLimiter, checkDeviceLimit, validate(registerSchema), authController.register);
+router.post('/login', authLimiter, captureDeviceId, validate(loginSchema), authController.login);
+router.post('/logout', authController.logout);
 
-    jwt.verify(token.split(' ')[1], process.env.JWT_SECRET || 'secret', (err, decoded) => {
-        if (err) return res.status(500).json({ message: 'Failed to authenticate token' });
-        req.user = decoded;
-        next();
-    });
-};
+// Legacy/Compatibility
+router.post('/send-otp', authLimiter, authController.sendOtp);
+router.post('/verify-otp', authLimiter, authController.verifyOtp);
 
-router.post('/send-otp', authController.sendOtp);
-router.post('/verify-otp', authController.verifyOtp);
+router.post('/google', authLimiter, captureDeviceId, authController.googleLogin);
 router.get('/me', verifyToken, authController.getMe);
+
+// Update FCM
+router.post('/update-fcm', auth, authController.updateFcmToken);
 
 module.exports = router;

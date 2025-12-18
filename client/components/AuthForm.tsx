@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 export function AuthForm() {
-    const { login, sendOtp, otpSent } = useAuth();
+    const { login, sendOtp, otpSent, googleLogin } = useAuth();
     const [phone, setPhone] = useState("");
     const [otp, setOtp] = useState("");
 
@@ -63,6 +65,36 @@ export function AuthForm() {
                     </Button>
                 </form>
             )}
+
+            <div className="mt-6 border-t border-[#27272a] pt-4">
+                <div className="flex justify-center">
+                    <GoogleLogin
+                        onSuccess={async (credentialResponse) => {
+                            if (credentialResponse.credential) {
+                                // Decode to get basic info if needed for immediate UI, 
+                                // but we send token to backend for verification/decoding
+                                // const decoded = jwtDecode(credentialResponse.credential);
+
+                                // For now, pass just the token to our context handler
+                                // We might want to decode here to get 'name' or passing it blank and letting server decode
+                                const decoded: any = jwtDecode(credentialResponse.credential);
+                                await googleLogin(credentialResponse.credential, {
+                                    email: decoded.email,
+                                    name: decoded.name,
+                                    picture: decoded.picture,
+                                    googleId: decoded.sub
+                                });
+                            }
+                        }}
+                        onError={() => {
+                            console.log('Login Failed');
+                            alert('Google Login Failed');
+                        }}
+                        theme="filled_black"
+                        shape="rectangular"
+                    />
+                </div>
+            </div>
         </div>
     );
 }

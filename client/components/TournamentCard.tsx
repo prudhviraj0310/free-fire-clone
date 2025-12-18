@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import Link from "next/link";
 import { Users, Clock, Trophy, MapPin } from "lucide-react";
@@ -33,6 +34,33 @@ export function TournamentCard({ tournament, onJoin, joining, isRegistered }: To
 
 
     // ... inside component ...
+    const [timeLeft, setTimeLeft] = useState("");
+
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const now = new Date().getTime();
+            const matchTime = new Date(tournament.matchTime).getTime();
+            const diff = matchTime - now;
+
+            if (diff <= 0) {
+                setTimeLeft("LIVE"); // or check status
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            if (days > 0) setTimeLeft(`${days}d ${hours}h`);
+            else setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+        };
+
+        calculateTimeLeft();
+        const timer = setInterval(calculateTimeLeft, 1000);
+        return () => clearInterval(timer);
+    }, [tournament.matchTime]);
+
     return (
         <div className="w-full bg-[#18181b] border border-[#27272a] rounded-xl overflow-hidden hover:border-green-500 hover:shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-all duration-300 group flex flex-col relative">
 
@@ -47,9 +75,14 @@ export function TournamentCard({ tournament, onJoin, joining, isRegistered }: To
                             <MapPin size={10} className="text-green-500" /> {tournament.map}
                         </span>
                     </div>
-                    <h3 className="text-xl font-black text-white italic uppercase tracking-tighter truncate leading-none mt-2">
-                        {tournament.title}
-                    </h3>
+                    <div className="mt-2">
+                        <h3 className="text-xl font-black text-white italic uppercase tracking-tighter truncate leading-none">
+                            {tournament.title}
+                        </h3>
+                        <div className="text-[10px] text-green-400 font-mono font-bold mt-1 flex items-center gap-1">
+                            {timeLeft === "LIVE" ? <span className="animate-pulse text-red-500">🔴 LIVE NOW</span> : <span>Starts in: {timeLeft}</span>}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Stats Body */}

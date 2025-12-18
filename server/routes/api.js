@@ -25,6 +25,6 @@ router.put('/tournaments/:id', verifyToken, tournamentController.updateTournamen
 
 // User Routes
 router.get('/user/transactions', verifyToken, userController.getTransactions);
-router.post('/user/deposit', verifyToken, userController.depositMock);
+router.post('/user/deposit', verifyToken, userController.deposit);
 
 module.exports = router;

@@ -10,12 +10,20 @@ exports.getTransactions = async (req, res) => {
     }
 };
 
-exports.depositMock = async (req, res) => { // For MVP testing
-    const { amount } = req.body;
+exports.deposit = async (req, res) => {
+    const { amount, paymentMethod } = req.body;
     const userId = req.user.id;
+
+    if (!amount || amount <= 0) {
+        return res.status(400).json({ message: 'Invalid amount' });
+    }
 
     try {
         const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
         user.walletBalance += amount;
         await user.save();
 
@@ -24,7 +32,8 @@ exports.depositMock = async (req, res) => { // For MVP testing
             amount,
             type: 'deposit',
             status: 'success',
-            description: 'Mock Deposit'
+            paymentId: `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            description: `Deposit via ${paymentMethod || 'Gateway'}`,
         });
 
         res.status(200).json({ message: 'Deposit successful', balance: user.walletBalance });
