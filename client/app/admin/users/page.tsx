@@ -36,7 +36,7 @@ export default function UsersPage() {
         setLoading(true);
         try {
             const res = await adminService.getUsers(debouncedSearch);
-            setData(res.users);
+            setData(Array.isArray(res.users) ? res.users : []);
         } catch (err) {
             console.error(err);
         } finally {

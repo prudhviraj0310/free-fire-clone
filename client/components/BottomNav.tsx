@@ -2,17 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Trophy, Wallet, User } from "lucide-react";
+import { Home, Trophy, Wallet, User, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
 export function BottomNav() {
     const pathname = usePathname();
+    const { user } = useAuth();
+
+    // Hide BottomNav on Admin pages
+    if (pathname?.startsWith('/admin')) return null;
+
+    const isAdmin = user && ['admin', 'super_admin', 'match_admin', 'finance_admin'].includes(user.role);
 
     const tabs = [
         { name: "Home", href: "/", icon: Home },
-        { name: "Tournaments", href: "/tournaments", icon: Trophy },
+        { name: "Tournaments", href: "/", icon: Trophy },
         { name: "Wallet", href: "/wallet", icon: Wallet },
-        { name: "Account", href: "/profile", icon: User }, // Placeholder for profile/login
+        ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: LayoutDashboard }] : []),
+        { name: "Account", href: "/profile", icon: User },
     ];
 
     return (

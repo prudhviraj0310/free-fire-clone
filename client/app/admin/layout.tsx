@@ -47,8 +47,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <AdminSidebar />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto h-screen p-4 md:p-8 bg-black pl-64">
-                <div className="max-w-7xl mx-auto">
+            {/* Main Content */}
+            <main className="flex-1 min-h-screen transition-all duration-300 ease-in-out md:ml-64 bg-black">
+                <div className="p-4 md:p-8 max-w-7xl mx-auto items-center justify-center">
                     {children}
                 </div>
             </main>

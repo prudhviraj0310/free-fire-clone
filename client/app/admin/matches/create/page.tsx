@@ -14,7 +14,7 @@ export default function CreateTournamentPage() {
         title: "",
         map: "BERMUDA",
         mode: "SOLO",
-        type: "PAID",
+        type: "BR",
         entryFee: 0,
         prizePool: 0,
         maxPlayers: 48,

@@ -30,7 +30,7 @@ export default function StatementPage() {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wallet/history`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setTransactions(res.data);
+                setTransactions(Array.isArray(res.data) ? res.data : []);
             } catch (error) {
                 console.error(error);
             } finally {

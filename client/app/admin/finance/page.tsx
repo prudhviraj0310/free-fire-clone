@@ -56,7 +56,7 @@ export default function FinancePage() {
 
 // --- DEPOSITS TABLE ---
 function DepositsTable() {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [globalFilter, setGlobalFilter] = useState("");
 
@@ -64,7 +64,7 @@ function DepositsTable() {
         setLoading(true);
         try {
             const res = await adminService.getPendingDeposits();
-            setData(res);
+            setData(Array.isArray(res) ? res : []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -181,7 +181,7 @@ function DepositsTable() {
 
 // --- WITHDRAWALS TABLE ---
 function WithdrawalsTable() {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {

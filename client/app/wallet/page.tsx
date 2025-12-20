@@ -38,7 +38,7 @@ export default function WalletPage() {
             const res = await axios.get(`${API_URL}/user/transactions`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setTransactions(res.data);
+            setTransactions(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -53,8 +53,9 @@ export default function WalletPage() {
     }, [user]);
 
     const handleInitiateDeposit = async () => {
-        if (!amount || Number(amount) <= 0) {
-            alert("Please enter a valid amount");
+        const val = Number(amount);
+        if (!amount || isNaN(val) || val < 10) {
+            alert("Minimum deposit amount is ₹10");
             return;
         }
 
@@ -97,10 +98,46 @@ export default function WalletPage() {
             <div className="grid lg:grid-cols-3 gap-8">
 
                 {/* Balance Card */}
-                <Button onClick={handleInitiateDeposit} className="w-full" glow disabled={loading}>
-                    {loading ? <Loader2 className="mr-2 animate-spin" /> : <CreditCard size={18} className="mr-2" />}
-                    {loading ? "Processing..." : "Add Money"}
-                </Button>
+                {/* Balance Card */}
+                <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl h-fit">
+                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <Wallet className="text-[var(--primary)]" size={20} />
+                        Add Funds
+                    </h3>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-2 block">Amount</label>
+                            <div className="relative">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold">₹</span>
+                                <input
+                                    type="number"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    placeholder="Enter amount (e.g. 100)"
+                                    className="w-full bg-black/50 border border-zinc-700 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-zinc-600 focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] transition-all font-mono text-lg"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                            {[100, 200, 500].map((amt) => (
+                                <button
+                                    key={amt}
+                                    onClick={() => setAmount(amt.toString())}
+                                    className="py-2 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 font-mono transition-colors"
+                                >
+                                    ₹{amt}
+                                </button>
+                            ))}
+                        </div>
+
+                        <Button onClick={handleInitiateDeposit} className="w-full py-6 text-base" glow disabled={loading}>
+                            {loading ? <Loader2 className="mr-2 animate-spin" /> : <CreditCard size={20} className="mr-2" />}
+                            {loading ? "Processing..." : "Add Money"}
+                        </Button>
+                    </div>
+                </div>
                 {/* ... */}
                 {/* Transaction History */}
                 <div className="lg:col-span-2">

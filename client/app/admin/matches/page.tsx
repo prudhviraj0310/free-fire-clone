@@ -15,14 +15,14 @@ import {
 } from "@tanstack/react-table";
 
 export default function MatchesPage() {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = async () => {
         setLoading(true);
         try {
             const res = await adminService.getMatches();
-            setData(res);
+            setData(Array.isArray(res) ? res : []);
         } catch (err) {
             console.error(err);
         } finally {

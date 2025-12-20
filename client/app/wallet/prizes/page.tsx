@@ -29,7 +29,8 @@ export default function PrizesPage() {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wallet/history`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                const wins = res.data.filter((tx: any) => tx.type === 'prize_winnings');
+                const data = Array.isArray(res.data) ? res.data : [];
+                const wins = data.filter((tx: any) => tx.type === 'prize_winnings');
                 setPrizes(wins);
             } catch (error) {
                 console.error(error);
