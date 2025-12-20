@@ -43,6 +43,17 @@ textarea {
   -webkit-user-select: text;
 }
 
+/* Button Active State for Tactile Feel */
+button:active {
+  transform: scale(0.96);
+  transition: transform 0.1s;
+}
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Utilities */
 @utility surface-card {
   background-color: rgba(24, 24, 27, 0.8);

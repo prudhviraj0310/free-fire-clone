@@ -61,6 +61,11 @@ export const adminService = {
         return res.data;
     },
 
+    cancelTournament: async (id: string, reason: string) => {
+        const res = await api.post(`/admin/match/${id}/cancel`, { reason });
+        return res.data;
+    },
+
     // WITHDRAWALS
     getPendingWithdrawals: async () => {
         const res = await api.get('/admin/withdrawals');

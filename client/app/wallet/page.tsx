@@ -136,6 +136,14 @@ export default function WalletPage() {
                             {loading ? <Loader2 className="mr-2 animate-spin" /> : <CreditCard size={20} className="mr-2" />}
                             {loading ? "Processing..." : "Add Money"}
                         </Button>
+
+                        <Button
+                            onClick={() => router.push('/wallet/withdraw')}
+                            className="w-full py-4 text-base bg-red-600 hover:bg-red-700 text-white"
+                            variant="secondary"
+                        >
+                            Withdraw Winnings
+                        </Button>
                     </div>
                 </div>
                 {/* ... */}

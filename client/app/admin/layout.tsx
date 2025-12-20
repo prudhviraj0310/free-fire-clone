@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import { MobileAdminHeader } from '@/components/admin/MobileAdminHeader';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, loading } = useAuth();
@@ -43,12 +44,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <div className="min-h-screen bg-black text-white flex flex-col md:flex-row">
+            {/* Mobile Header */}
+            <div className="md:hidden">
+                <MobileAdminHeader />
+            </div>
+
             {/* Sidebar */}
             <AdminSidebar />
 
             {/* Main Content */}
             {/* Main Content */}
-            <main className="flex-1 min-h-screen transition-all duration-300 ease-in-out md:ml-64 bg-black">
+            <main className="flex-1 min-h-screen transition-all duration-300 ease-in-out md:ml-64 bg-black pt-20 md:pt-0">
                 <div className="p-4 md:p-8 max-w-7xl mx-auto items-center justify-center">
                     {children}
                 </div>

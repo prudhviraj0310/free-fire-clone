@@ -105,6 +105,28 @@ export default function MatchesPage() {
                     >
                         <Trash2 size={14} />
                     </Button>
+
+                    {info.row.original.joined > 0 && ['OPEN', 'LIVE'].includes(info.row.original.status) && (
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            className="bg-orange-600/20 text-orange-500 hover:bg-orange-600 hover:text-white border border-orange-600/50 h-8 px-2"
+                            onClick={async () => {
+                                const reason = prompt("Enter cancellation reason (Refunds will be processed):");
+                                if (reason) {
+                                    try {
+                                        await adminService.cancelTournament(info.row.original._id, reason);
+                                        fetchData();
+                                        alert("Tournament cancelled and players refunded.");
+                                    } catch (e: any) {
+                                        alert(e.response?.data?.message || "Failed to cancel");
+                                    }
+                                }
+                            }}
+                        >
+                            <span className="text-[10px] font-bold">CANCEL</span>
+                        </Button>
+                    )}
                 </div>
             )
         })
@@ -134,7 +156,8 @@ export default function MatchesPage() {
                 </Link>
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
                 <table className="w-full text-left">
                     <thead className="text-xs uppercase text-zinc-500 bg-zinc-900/50 border-b border-zinc-800">
                         {table.getHeaderGroups().map(headerGroup => (
@@ -159,6 +182,86 @@ export default function MatchesPage() {
                         ))}
                     </tbody>
                 </table>
+                {data.length === 0 && <div className="text-center py-12 text-zinc-500">No tournaments found.</div>}
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4 pb-20">
+                {data.map((match) => (
+                    <div key={match._id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-sm">
+                        <div className="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 className="font-bold text-white text-lg leading-tight">{match.title}</h3>
+                                <div className="text-xs text-zinc-500 mt-1 flex items-center gap-2">
+                                    <span className="uppercase tracking-wider">{match.map}</span>
+                                    <span>•</span>
+                                    <span>{match.mode}</span>
+                                </div>
+                            </div>
+                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${match.status === 'OPEN' ? "bg-blue-900/40 text-blue-400" :
+                                    match.status === 'LIVE' ? "bg-red-900/40 text-red-400 animate-pulse" :
+                                        match.status === 'COMPLETED' ? "bg-green-900/40 text-green-400" :
+                                            "bg-zinc-800 text-zinc-500"
+                                }`}>
+                                {match.status}
+                            </span>
+                        </div>
+
+                        <div className="flex justify-between items-center text-sm text-zinc-400 mb-4 bg-black/20 p-3 rounded-lg">
+                            <div className="flex items-center gap-2">
+                                <Calendar size={14} />
+                                {format(new Date(match.matchTime), 'dd MMM, HH:mm')}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Users size={14} />
+                                <span className={match.joined >= match.maxPlayers ? "text-green-500 font-bold" : ""}>
+                                    {match.joined}/{match.maxPlayers}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                            <Link href={`/admin/matches/details?id=${match._id}`} className="flex-1">
+                                <Button size="sm" variant="outline" className="w-full border-zinc-700 h-10">
+                                    <Edit size={16} className="mr-2" />
+                                    Manage
+                                </Button>
+                            </Link>
+
+                            {match.joined > 0 && ['OPEN', 'LIVE'].includes(match.status) ? (
+                                <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    className="flex-1 bg-orange-600/10 text-orange-500 border border-orange-600/30 h-10"
+                                    onClick={async () => {
+                                        const reason = prompt("Enter cancellation reason:");
+                                        if (reason) {
+                                            try {
+                                                await adminService.cancelTournament(match._id, reason);
+                                                fetchData();
+                                                alert("Cancelled & Refunded");
+                                            } catch (e: any) {
+                                                alert(e.response?.data?.message);
+                                            }
+                                        }
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="sm"
+                                    variant="danger"
+                                    className="w-10 px-0 h-10"
+                                    onClick={() => handleDelete(match._id)}
+                                    disabled={match.joined > 0}
+                                >
+                                    <Trash2 size={16} />
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                ))}
                 {data.length === 0 && <div className="text-center py-12 text-zinc-500">No tournaments found.</div>}
             </div>
         </div>

@@ -15,21 +15,31 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+    mobile?: boolean;
+    onItemClick?: () => void;
+}
+
+export default function AdminSidebar({ mobile, onItemClick }: AdminSidebarProps) {
     const pathname = usePathname();
     const { logout, user } = useAuth();
-
+    // ... existing links ...
     const links = [
-        { href: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
-        { href: '/admin/finance', label: 'Finance', icon: Wallet },
-        { href: '/admin/matches', label: 'Matches', icon: Trophy },
-        { href: '/admin/users', label: 'Users', icon: Users },
-        { href: '/admin/notifications', label: 'Notifications', icon: Bell },
-        { href: '/admin/logs', label: 'Audit Logs', icon: FileText },
+        { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
+        { label: 'Matches', href: '/admin/matches', icon: Trophy, exact: false },
+        { label: 'Users', href: '/admin/users', icon: Users, exact: false },
+        { label: 'Finance', href: '/admin/finance', icon: Wallet, exact: false },
+        { label: 'Withdrawals', href: '/admin/withdrawals', icon: FileText, exact: false },
+        { label: 'Notifications', href: '/admin/notifications', icon: Bell, exact: false },
     ];
 
+    // Dynamic classes based on mobile prop
+    const containerClasses = mobile
+        ? "flex flex-col w-full h-full bg-transparent"
+        : "hidden md:flex w-64 bg-zinc-950 border-r border-zinc-800/50 h-screen flex-col fixed left-0 top-0 z-50";
+
     return (
-        <div className="hidden md:flex w-64 bg-zinc-950 border-r border-zinc-800/50 h-screen flex-col fixed left-0 top-0 z-50">
+        <div className={containerClasses}>
             {/* Logo Header */}
             <div className="h-16 flex items-center px-6 border-b border-zinc-800/50 bg-gradient-to-r from-zinc-900 to-zinc-950">
                 <div className="flex items-center gap-2">
@@ -74,6 +84,7 @@ export default function AdminSidebar() {
                         <Link
                             key={link.href}
                             href={link.href}
+                            onClick={onItemClick}
                             className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative ${isActive
                                 ? 'bg-gradient-to-r from-red-500/20 to-orange-500/10 text-white'
                                 : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'

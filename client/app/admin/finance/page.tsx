@@ -108,11 +108,11 @@ function DepositsTable() {
             header: "Actions",
             cell: info => (
                 <div className="flex gap-2">
-                    <Button size="sm" onClick={() => handleAction(info.row.original._id, 'approve')} className="bg-green-600 hover:bg-green-700 h-8 px-3">
-                        <Check size={14} />
+                    <Button size="sm" onClick={() => handleAction(info.row.original._id, 'approve')} className="bg-green-600 hover:bg-green-700 h-8 px-3 gap-1">
+                        <Check size={14} /> <span className="hidden sm:inline">Approve</span>
                     </Button>
-                    <Button size="sm" variant="danger" onClick={() => handleAction(info.row.original._id, 'reject')} className="h-8 px-3">
-                        <X size={14} />
+                    <Button size="sm" variant="danger" onClick={() => handleAction(info.row.original._id, 'reject')} className="h-8 px-3 gap-1">
+                        <X size={14} /> <span className="hidden sm:inline">Reject</span>
                     </Button>
                 </div>
             )
