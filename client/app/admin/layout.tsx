@@ -16,22 +16,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         if (!user) {
             router.push('/login');
+            // console.log("User missing in AdminLayout");
             return;
         }
-
-        const adminRoles = ['admin', 'super_admin', 'match_admin', 'finance_admin'];
-        if (!adminRoles.includes(user.role)) {
-            router.push('/');
-            return;
-        }
-
-        setIsAuthorized(true);
     }, [user, loading, router]);
 
-    if (loading || !isAuthorized) {
+    if (loading) return <div>Loading Auth...</div>;
+
+    if (!user) {
+        // Redirect if not logged in
+        // router.push is handled in useEffect, but we return null to prevent flash
+        return null;
+    }
+
+    const adminRoles = ['admin', 'super_admin', 'match_admin', 'finance_admin'];
+    if (!adminRoles.includes(user.role)) {
         return (
-            <div className="min-h-screen bg-black flex items-center justify-center text-white">
-                <Loader2 className="animate-spin text-[var(--primary)]" size={40} />
+            <div className="min-h-screen bg-black flex items-center justify-center text-red-500 font-bold flex-col gap-4">
+                <span className="text-2xl">Access Denied</span>
+                <span>Required: Admin</span>
+                <span>Your Role: {user.role}</span>
+                <span className="text-gray-500 text-sm">Phone: {user.phone}</span>
             </div>
         );
     }

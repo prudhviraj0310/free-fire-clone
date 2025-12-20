@@ -72,27 +72,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const login = async (phone: string, otp: string) => {
         try {
             const res = await api.post("/auth/verify-otp", { phone, otp });
-            // Token is in cookie now
-            setUser(res.data.data?.user || res.data.user);
-            router.push('/');
-        } catch (error) {
-            console.error(error);
-            alert('Login failed');
+            const loggedInUser = res.data.data?.user || res.data.user;
+
+            // Save token to localStorage as backup for admin service
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+            }
+
+            setUser(loggedInUser);
+
+            // Role-based redirect
+            if (['admin', 'super_admin', 'match_admin', 'finance_admin'].includes(loggedInUser.role)) {
+                router.push('/admin');
+            } else {
+                router.push('/');
+            }
+        } catch (error: any) {
+            const message = error.response?.data?.message || 'Login failed. Please try again.';
+            throw new Error(message);
         }
     };
 
     const googleLogin = async (token: string, userInfo: any) => {
         try {
-            // We verify the token on the server
             const res = await api.post("/auth/google", {
                 token,
                 ...userInfo
             });
-            setUser(res.data.data?.user || res.data.user);
-            router.push('/');
-        } catch (error) {
-            console.error("Google Login Error", error);
-            alert("Google Login Failed");
+            const loggedInUser = res.data.data?.user || res.data.user;
+
+            if (res.data.token) {
+                localStorage.setItem('token', res.data.token);
+            }
+
+            setUser(loggedInUser);
+
+            // Role-based redirect for Google login too
+            if (['admin', 'super_admin', 'match_admin', 'finance_admin'].includes(loggedInUser.role)) {
+                router.push('/admin');
+            } else {
+                router.push('/');
+            }
+        } catch (error: any) {
+            const message = error.response?.data?.message || 'Google login failed. Please try again.';
+            throw new Error(message);
         }
     };
 
@@ -100,8 +123,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             await api.post("/auth/logout");
         } catch (e) {
-            console.error("Logout error", e);
+            // Silently handle logout errors
         }
+        // Clear all auth state
+        localStorage.removeItem('token');
         setUser(null);
         router.push("/login");
     };
