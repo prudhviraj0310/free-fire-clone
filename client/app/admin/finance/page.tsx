@@ -77,9 +77,12 @@ function DepositsTable() {
     }, []);
 
     const handleAction = async (id: string, action: 'approve' | 'reject') => {
+        const note = prompt(action === 'reject' ? "Enter rejection reason (Required):" : "Enter approval note (Optional):");
+        if (action === 'reject' && !note) return; // Rejection requires reason
+
         if (!confirm(`Are you sure you want to ${action} this deposit?`)) return;
         try {
-            await adminService.handleDeposit(id, action, action === 'reject' ? 'Admin Rejected' : undefined);
+            await adminService.handleDeposit(id, action, note || undefined);
             fetchData(); // Refresh
         } catch (e) {
             alert("Action failed");

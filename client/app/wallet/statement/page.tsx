@@ -113,7 +113,7 @@ export default function StatementPage() {
                 <div className="flex justify-center mt-8">
                     <div className="flex items-center gap-2 text-xs text-zinc-600">
                         <ShieldCheck size={12} />
-                        <span>Secure Ledger &bull; Free Fire Tournament Platform</span>
+                        <span>Secure Ledger &bull; MadGamers Platform</span>
                     </div>
                 </div>
             </div>

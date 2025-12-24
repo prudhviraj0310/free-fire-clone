@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { getDeviceId } from "../utils/device";
+import usePushNotifications from "@/hooks/usePushNotifications";
 
 interface User {
     _id: string;
@@ -15,11 +16,13 @@ interface User {
 
 interface AuthContextType {
     user: any;
+    token: string | null;
     loading: boolean;
     otpSent: boolean;
     sendOtp: (phone: string) => Promise<void>;
-    login: (phone: string, otp: string) => Promise<void>;
-    googleLogin: (token: string, userInfo: any) => Promise<void>;
+    resetOtpState: () => void;
+    login: (phone: string, otp: string, freeFireId?: string, inGameName?: string) => Promise<void>;
+    googleLogin: (token: string, userInfo: any, freeFireId?: string, inGameName?: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -27,6 +30,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
+    const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [otpSent, setOtpSent] = useState(false);
     const router = useRouter();
@@ -50,6 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     useEffect(() => {
+        // Hydrate token
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) setToken(storedToken);
+
         // Just call /me directly, cookie is handled by browser
         api.get("/auth/me")
             .then((res) => {
@@ -59,6 +67,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 // If 401, mostly clear session
                 if (err.response && err.response.status === 401) {
                     setUser(null);
+                    setToken(null);
+                    localStorage.removeItem('token');
                 }
             })
             .finally(() => setLoading(false));
@@ -69,14 +79,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setOtpSent(true);
     };
 
-    const login = async (phone: string, otp: string) => {
+    const resetOtpState = () => {
+        setOtpSent(false);
+    };
+
+    const login = async (phone: string, otp: string, freeFireId?: string, inGameName?: string) => {
         try {
-            const res = await api.post("/auth/verify-otp", { phone, otp });
+            const res = await api.post("/auth/verify-otp", { phone, otp, freeFireId, inGameName });
             const loggedInUser = res.data.data?.user || res.data.user;
 
             // Save token to localStorage as backup for admin service
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
+                setToken(res.data.token);
             }
 
             setUser(loggedInUser);
@@ -85,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (['admin', 'super_admin', 'match_admin', 'finance_admin'].includes(loggedInUser.role)) {
                 router.push('/admin');
             } else {
-                router.push('/');
+                router.push('/tournaments');
             }
         } catch (error: any) {
             const message = error.response?.data?.message || 'Login failed. Please try again.';
@@ -93,16 +108,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const googleLogin = async (token: string, userInfo: any) => {
+    const googleLogin = async (token: string, userInfo: any, freeFireId?: string, inGameName?: string) => {
         try {
             const res = await api.post("/auth/google", {
                 token,
-                ...userInfo
+                ...userInfo,
+                freeFireId,
+                inGameName
             });
             const loggedInUser = res.data.data?.user || res.data.user;
 
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
+                setToken(res.data.token);
             }
 
             setUser(loggedInUser);
@@ -111,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (['admin', 'super_admin', 'match_admin', 'finance_admin'].includes(loggedInUser.role)) {
                 router.push('/admin');
             } else {
-                router.push('/');
+                router.push('/tournaments');
             }
         } catch (error: any) {
             const message = error.response?.data?.message || 'Google login failed. Please try again.';
@@ -127,12 +145,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         // Clear all auth state
         localStorage.removeItem('token');
+        setToken(null);
         setUser(null);
         router.push("/login");
     };
 
+    // Initialize Push Notifications
+    usePushNotifications(user);
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, sendOtp, otpSent, googleLogin }}>
+        <AuthContext.Provider value={{ user, token, loading, login, logout, sendOtp, resetOtpState, otpSent, googleLogin }}>
             {children}
         </AuthContext.Provider>
     );

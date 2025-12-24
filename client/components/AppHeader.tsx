@@ -13,8 +13,8 @@ export function AppHeader() {
             <div className="flex items-center gap-2">
                 {/* Brand / Logo if needed, or just Title for context */}
                 <Link href="/" className="flex items-center gap-1">
-                    <span className="text-xl font-black italic tracking-tighter text-white">FF</span>
-                    <span className="text-xl font-black italic tracking-tighter text-green-500">ARENA</span>
+                    <span className="text-xl font-black italic tracking-tighter text-white">Mad</span>
+                    <span className="text-xl font-black italic tracking-tighter text-green-500">Gamers</span>
                 </Link>
             </div>
 

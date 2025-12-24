@@ -47,11 +47,32 @@ function MatchDetailsContent() {
                 </div>
 
                 {canSubmitResults && (
-                    <Link href={`/admin/matches/results?id=${id}`}>
-                        <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold">
-                            <Trophy size={18} className="mr-2" /> Enter Results
-                        </Button>
-                    </Link>
+                    <div className="flex gap-2">
+                        <Link href={`/admin/matches/results?id=${match._id}`}>
+                            <Button className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold">
+                                <Trophy size={18} className="mr-2" /> Enter Results
+                            </Button>
+                        </Link>
+                        {['OPEN', 'LIVE'].includes(match.status) && match.players?.length > 0 && (
+                            <Button
+                                variant="danger"
+                                onClick={async () => {
+                                    const reason = prompt("Enter cancellation reason (Refunds will be processed):");
+                                    if (reason) {
+                                        try {
+                                            await adminService.cancelTournament(id as string, reason);
+                                            alert("Tournament cancelled and players refunded.");
+                                            loadMatch();
+                                        } catch (e: any) {
+                                            alert(e.response?.data?.message || "Failed to cancel");
+                                        }
+                                    }
+                                }}
+                            >
+                                Cancel & Refund
+                            </Button>
+                        )}
+                    </div>
                 )}
             </div>
 

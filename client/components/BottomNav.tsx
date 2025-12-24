@@ -10,14 +10,13 @@ export function BottomNav() {
     const pathname = usePathname();
     const { user } = useAuth();
 
-    // Hide BottomNav on Admin pages
-    if (pathname?.startsWith('/admin')) return null;
+    // Hide BottomNav on Admin pages, login page, and landing page
+    if (pathname?.startsWith('/admin') || pathname === '/login' || pathname === '/') return null;
 
     const isAdmin = user && ['admin', 'super_admin', 'match_admin', 'finance_admin'].includes(user.role);
 
     const tabs = [
-        { name: "Home", href: "/", icon: Home },
-        { name: "Tournaments", href: "/", icon: Trophy },
+        { name: "Matches", href: "/tournaments", icon: Trophy },
         { name: "Wallet", href: "/wallet", icon: Wallet },
         ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: LayoutDashboard }] : []),
         { name: "Account", href: "/profile", icon: User },

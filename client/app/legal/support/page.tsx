@@ -24,7 +24,7 @@ export default function SupportPage() {
                 </div>
 
                 <a
-                    href="https://wa.me/919876543210?text=I%20need%20help%20with%20Free%20Fire%20App"
+                    href="https://wa.me/919876543210?text=I%20need%20help%20with%20MadGamers%20App"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block"
@@ -36,7 +36,7 @@ export default function SupportPage() {
             </div>
 
             <div className="text-zinc-500 text-sm">
-                Email: support@freefiretournament.com
+                Email: support@madgamers.com
             </div>
         </div>
     );

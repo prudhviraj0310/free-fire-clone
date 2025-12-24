@@ -40,3 +40,4 @@ ios/
 *.apk
 *.aab
 server/
+!website/public/madgamers.apk

@@ -2,13 +2,13 @@ import { AuthForm } from "@/components/AuthForm";
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 pb-20 md:pb-4 relative overflow-hidden">
+        <div className="min-h-screen min-h-screen-safe flex items-center justify-center p-4 pb-8 safe-area-bottom relative overflow-hidden">
             {/* Animated Background */}
             <div className="absolute inset-0 bg-zinc-950">
                 {/* Gradient orbs */}
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-yellow-500/10 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/4 left-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-72 sm:w-96 h-72 sm:h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-yellow-500/10 rounded-full blur-3xl"></div>
 
                 {/* Grid overlay */}
                 <div

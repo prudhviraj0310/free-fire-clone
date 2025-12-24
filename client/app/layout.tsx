@@ -7,9 +7,11 @@ import { AuthProvider } from "@/context/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { BottomNav } from "@/components/BottomNav";
 import { AppShell } from "@/components/AppShell";
+import { BackButtonHandler } from "@/components/BackButtonHandler";
+import { WebRedirect } from "@/components/WebRedirect";
 
 export const metadata: Metadata = {
-  title: "Free Fire Tournament Platform",
+  title: "MadGamers",
   description: "Join custom rooms and win prizes.",
 };
 
@@ -26,6 +28,8 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "MOCK_CLIENT_ID_FOR_DEV"}>
           <AuthProvider>
+            <BackButtonHandler />
+            <WebRedirect />
             <AppShell>
               {children}
             </AppShell>
@@ -37,3 +41,4 @@ export default function RootLayout({
     </html >
   );
 }
+

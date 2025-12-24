@@ -25,7 +25,7 @@ export default function CommissionPolicyPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold text-white">No Gambling Policy</h2>
                 <p>
-                    Free Fire is a game of skill. Outcome is determined by your gameplay, strategy, and aim—not by luck.
+                    Survival Battle is a game of skill. Outcome is determined by your gameplay, strategy, and aim—not by luck.
                     Therefore, it is protected under Indian laws as a "Game of Skill" (except in restricted states).
                 </p>
             </section>

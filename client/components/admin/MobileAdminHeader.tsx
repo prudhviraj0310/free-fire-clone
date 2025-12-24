@@ -11,7 +11,7 @@ export function MobileAdminHeader() {
         <div className="md:hidden flex flex-col bg-zinc-950 border-b border-zinc-800 fixed top-0 left-0 right-0 z-[9999] pt-[env(safe-area-inset-top)]">
             <div className="flex items-center justify-between p-4 h-16">
                 <span className="text-lg font-black text-white italic tracking-tighter">
-                    FF ARENA <span className="text-red-500">ADMIN</span>
+                    MadGamers <span className="text-red-500">ADMIN</span>
                 </span>
                 <button
                     onClick={() => setIsOpen(!isOpen)}
